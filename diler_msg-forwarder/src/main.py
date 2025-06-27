@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from message_scraper import MessageScraper
 from email_utils import send_email_with_attachments
+import smtplib
 
 load_dotenv()
 
@@ -32,6 +33,24 @@ def main():
                     attachments=msg['attachments']
                 )
                 scraper.mark_message_as_read(msg['id'])
+            except smtplib.SMTPAuthenticationError: # Handling an authentication error if the server rejects our login credentials.
+                print("Invalid username or password. Please check your login credentials and try again.")
+            except smtplib.SMTPException as e: # Handling any other SMTP errors that may occur.
+                print("An error occurred:", e) # Printing the error message if an error occurs.
+                try:
+                    send_email_with_attachments(
+                        smtp_server=SMTP_SERVER,
+                        smtp_port=SMTP_PORT,
+                        email_address=EMAIL_ADDRESS,
+                        email_password=EMAIL_PASSWORD,
+                        to_address=TO_EMAIL_ADDRESS,
+                        subject=msg['subject'],
+                        body=msg['body'],
+                        attachments=[]  # Sending email without attachments if the first attempt fails
+                    )
+                    scraper.mark_message_as_read(msg['id'])
+                except Exception as e:
+                    raise Exception(f"Failed to send email without attachments: {e}")
             except Exception as e:
                 print(f"Failed to forward message {msg['id']}: {e}")
 

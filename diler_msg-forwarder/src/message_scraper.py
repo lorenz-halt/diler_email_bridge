@@ -108,6 +108,8 @@ class MessageScraper:
                 except Exception:
                     subject = ''
                 attachments = []
+                download_failures = []
+                download_links_html = []
                 soup = BeautifulSoup(message_html, 'html.parser')
                 for a in soup.find_all('a'):
                     url = a.get('rel') or a.get('href')
@@ -120,16 +122,18 @@ class MessageScraper:
                         media_id = match.group(1)
                         cloud_url = f'{self.base_url}/{url}'
                         inbox_url = driver.current_url
+                        # Add download link to email body (absolute URL)
+                        download_links_html.append(
+                            f'<br><br><br><a href="{cloud_url}" target="_blank">Datei im Browser öffnen (Download-Seite)</a>'
+                        )
                         driver.get(cloud_url)
                         time.sleep(2)
                         try:
                             tr = driver.find_element(By.XPATH, f'//tr[@data-media-id="{media_id}"]')
                             download_a = tr.find_element(By.CSS_SELECTOR, 'a.fileDownload')
                             download_url = download_a.get_attribute('href')
-                            # Use the data-filename attribute for the filename
                             filename = download_a.get_attribute('data-filename')
                             if not filename:
-                                # fallback to visible filename in the table
                                 try:
                                     filename = tr.find_element(By.CSS_SELECTOR, '.fileName.mediaDisplay').get_attribute('title')
                                 except Exception:
@@ -138,7 +142,6 @@ class MessageScraper:
                             os.makedirs(os.path.dirname(local_path), exist_ok=True)
                             selenium_cookies = driver.get_cookies()
                             cookies_dict = {c['name']: c['value'] for c in selenium_cookies}
-                            # Copy user-agent from Selenium
                             user_agent = driver.execute_script("return navigator.userAgent;")
                             headers = {'User-Agent': user_agent}
                             r = requests.get(download_url, cookies=cookies_dict, headers=headers, stream=True)
@@ -149,11 +152,23 @@ class MessageScraper:
                                 attachments.append(local_path)
                             except Exception as e:
                                 print(f"Error downloading attachment {filename}: {e}")
+                                download_failures.append(filename)
                         except Exception as e:
                             print(f"Could not download attachment for media_id {media_id}: {e}")
+                            download_failures.append(f"media_id {media_id}")
                         driver.get(inbox_url)
                         time.sleep(1)
-                        
+                # Append download links to the message body
+                if download_links_html:
+                    message_html += ''.join(download_links_html)
+                # If any download failed, add a comment to the email
+                if download_failures:
+                    message_html += (
+                        "<br><br><br><b>Achtung:</b> "
+                        "Der Download der folgenden Datei(en) ist fehlgeschlagen: "
+                        f"{', '.join(download_failures)}. "
+                        "Sie können die Datei(en) manuell über den Link oben im Browser herunterladen."
+                    )
                 messages.append({
                     'id': message_id,
                     'subject': subject or f'DILER Nachricht von {sender}',
@@ -166,6 +181,28 @@ class MessageScraper:
 
     def mark_message_as_read(self, message_id):
         driver = self.driver
+        wait = WebDriverWait(driver, 20)
+        
+        # Switch to messages inbox 
+        driver.get(f'{self.base_url}/messages/inbox')
+        wait.until(EC.presence_of_element_located((By.ID, 'texterMessages')))
+        
+        # Select '365 Tage' (all messages)
+        try:
+            btn_365 = driver.find_element(By.XPATH, '//label[@for="ts4"]')
+            btn_365.click()
+            time.sleep(1)
+        except Exception:
+            print("365 Tage button not found, skipping.")
+        
+        # Select 'Ungelesene' (unread)
+        try:
+            btn_unread = driver.find_element(By.XPATH, '//label[@for="mt_read_status_unread"]')
+            btn_unread.click()
+            time.sleep(2)
+        except Exception:
+            print("Ungelesene button not found, skipping.")
+
         try:
             read_btn = driver.find_element(By.XPATH, f'//tr[@id="{message_id}"]//button[contains(@id, "read{message_id}")]')
             icon = read_btn.find_element(By.TAG_NAME, 'i')
