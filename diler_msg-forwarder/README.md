@@ -5,7 +5,7 @@ This project is designed to log into the DILER website, scrape unread messages, 
 ## Project Structure
 
 ```
-stuttgart-message-forwarder
+diler-message-forwarder
 ├── src
 │   ├── main.py            # Entry point of the application
 │   ├── email_utils.py     # Utility functions for sending emails
@@ -21,7 +21,7 @@ stuttgart-message-forwarder
 1. **Clone the repository:**
    ```
    git clone <repository-url>
-   cd stuttgart-message-forwarder
+   cd diler-message-forwarder
    ```
 
 2. **Create a virtual environment:**
