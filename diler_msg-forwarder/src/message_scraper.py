@@ -31,6 +31,16 @@ class MessageScraper:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        # Delete all files in the attachments folder on exit
+        attachments_dir = os.path.join(os.path.dirname(__file__), 'attachments')
+        if os.path.exists(attachments_dir):
+            for filename in os.listdir(attachments_dir):
+                file_path = os.path.join(attachments_dir, filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                except Exception as e:
+                    print(f"Error deleting file {file_path}: {e}")
         if self.driver:
             self.driver.quit()
             self.driver = None
