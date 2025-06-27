@@ -119,8 +119,8 @@ class MessageScraper:
                     subject = ''
                 attachments = []
                 download_failures = []
-                download_links_html = []
                 soup = BeautifulSoup(message_html, 'html.parser')
+                # Now find all download links in the message
                 for a in soup.find_all('a'):
                     url = a.get('rel') or a.get('href')
                     if isinstance(url, list):
@@ -133,9 +133,9 @@ class MessageScraper:
                         cloud_url = f'{self.base_url}/{url}'
                         inbox_url = driver.current_url
                         # Add download link to email body (absolute URL)
-                        download_links_html.append(
-                            f'<br><br><br><a href="{cloud_url}" target="_blank">Datei im Browser öffnen (Download-Seite)</a>'
-                        )
+                        a.attrs = {}
+                        a['href']=cloud_url
+                        # Download link for the email body
                         driver.get(cloud_url)
                         time.sleep(2)
                         try:
@@ -168,16 +168,15 @@ class MessageScraper:
                             download_failures.append(f"media_id {media_id}")
                         driver.get(inbox_url)
                         time.sleep(1)
-                # Append download links to the message body
-                if download_links_html:
-                    message_html += ''.join(download_links_html)
+                # Convert soup back to HTML for message_html
+                message_html = str(soup)
                 # If any download failed, add a comment to the email
                 if download_failures:
                     message_html += (
                         "<br><br><br><b>Achtung:</b> "
                         "Der Download der folgenden Datei(en) ist fehlgeschlagen: "
                         f"{', '.join(download_failures)}. "
-                        "Sie können die Datei(en) manuell über den Link oben im Browser herunterladen."
+                        "Sie können die Datei(en) evtl. manuell über den Link oben im Browser herunterladen."
                     )
                 messages.append({
                     'id': message_id,
