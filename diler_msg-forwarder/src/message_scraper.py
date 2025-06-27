@@ -84,7 +84,7 @@ class MessageScraper:
         try:
             btn_unread = driver.find_element(By.XPATH, '//label[@for="mt_read_status_unread"]')
             btn_unread.click()
-            time.sleep(2)
+            time.sleep(1)
         except Exception:
             print("Ungelesene button not found, skipping.")
 
@@ -137,7 +137,7 @@ class MessageScraper:
                         a['href']=cloud_url
                         # Download link for the email body
                         driver.get(cloud_url)
-                        time.sleep(2)
+                        time.sleep(1)
                         try:
                             tr = driver.find_element(By.XPATH, f'//tr[@data-media-id="{media_id}"]')
                             download_a = tr.find_element(By.CSS_SELECTOR, 'a.fileDownload')
@@ -208,7 +208,7 @@ class MessageScraper:
         try:
             btn_unread = driver.find_element(By.XPATH, '//label[@for="mt_read_status_unread"]')
             btn_unread.click()
-            time.sleep(2)
+            time.sleep(1)
         except Exception:
             print("Ungelesene button not found, skipping.")
 
