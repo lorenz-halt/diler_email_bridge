@@ -8,6 +8,9 @@ load_dotenv()
 
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 TO_EMAIL_ADDRESS = os.getenv('TO_EMAIL_ADDRESS')
+# Support for multiple email addresses
+# If TO_EMAIL_ADDRESS is a comma-separated string, split it into a list.
+TO_EMAIL_ADDRESSES = [addr.strip() for addr in TO_EMAIL_ADDRESS.split(',')] if TO_EMAIL_ADDRESS else []
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 SMTP_SERVER = os.getenv('SMTP_SERVER')
 SMTP_PORT = int(os.getenv('SMTP_PORT'))
@@ -27,7 +30,7 @@ def main():
                     smtp_port=SMTP_PORT,
                     email_address=EMAIL_ADDRESS,
                     email_password=EMAIL_PASSWORD,
-                    to_address=TO_EMAIL_ADDRESS,
+                    to_address=TO_EMAIL_ADDRESSES,
                     subject=msg['subject'],
                     body=msg['body'],
                     attachments=msg['attachments']
@@ -43,7 +46,7 @@ def main():
                         smtp_port=SMTP_PORT,
                         email_address=EMAIL_ADDRESS,
                         email_password=EMAIL_PASSWORD,
-                        to_address=TO_EMAIL_ADDRESS,
+                        to_address=TO_EMAIL_ADDRESSES,
                         subject=msg['subject'],
                         body=msg['body'],
                         attachments=[]  # Sending email without attachments if the first attempt fails
