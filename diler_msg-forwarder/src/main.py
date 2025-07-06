@@ -6,11 +6,9 @@ import smtplib
 
 load_dotenv()
 
+
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
-TO_EMAIL_ADDRESS = os.getenv('TO_EMAIL_ADDRESS')
-# Support for multiple email addresses
-# If TO_EMAIL_ADDRESS is a comma-separated string, split it into a list.
-TO_EMAIL_ADDRESSES = [addr.strip() for addr in TO_EMAIL_ADDRESS.split(',')] if TO_EMAIL_ADDRESS else []
+TO_EMAIL_ADDRESSES = os.getenv('TO_EMAIL_ADDRESS') or ''
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 SMTP_SERVER = os.getenv('SMTP_SERVER')
 SMTP_PORT = int(os.getenv('SMTP_PORT'))
@@ -24,6 +22,8 @@ def main():
     with MessageScraper(WEBSITE_URL, WEBSITE_USERNAME, WEBSITE_PASSWORD) as scraper:
         unread_messages = scraper.get_unread_messages()
         for msg in unread_messages:
+            # Add date to subject if available
+            subject = f"{msg['subject']} ({msg['date']})" if msg.get('date') else msg['subject']
             try:
                 send_email_with_attachments(
                     smtp_server=SMTP_SERVER,
@@ -31,7 +31,7 @@ def main():
                     email_address=EMAIL_ADDRESS,
                     email_password=EMAIL_PASSWORD,
                     to_address=TO_EMAIL_ADDRESSES,
-                    subject=msg['subject'],
+                    subject=subject,
                     body=msg['body'],
                     attachments=msg['attachments']
                 )
@@ -47,7 +47,7 @@ def main():
                         email_address=EMAIL_ADDRESS,
                         email_password=EMAIL_PASSWORD,
                         to_address=TO_EMAIL_ADDRESSES,
-                        subject=msg['subject'],
+                        subject=subject,
                         body=msg['body'],
                         attachments=[]  # Sending email without attachments if the first attempt fails
                     )

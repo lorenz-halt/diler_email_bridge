@@ -38,7 +38,13 @@ def send_email_with_attachments(smtp_server, smtp_port,
                                 subject, body, attachments):
     msg = MIMEMultipart()
     msg['From'] = email_address
-    msg['To'] = to_address
+    # Accept comma-separated string or list for to_address
+    if isinstance(to_address, list):
+        msg['To'] = ', '.join(to_address)
+    elif isinstance(to_address, str):
+        msg['To'] = to_address
+    else:
+        msg['To'] = str(to_address)
     msg['Subject'] = subject
     # Use HTML encoding for better email appearance
     msg.attach(MIMEText(body, 'html', 'utf-8'))

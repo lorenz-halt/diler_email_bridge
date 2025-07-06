@@ -113,6 +113,11 @@ class MessageScraper:
                 elem = driver.find_element(By.ID, message_id)
                 sender = elem.find_element(By.CSS_SELECTOR, '.sender').text
                 message_html = elem.find_element(By.CSS_SELECTOR, '.message-text .texterMessage').get_attribute('innerHTML')
+                # Extract date from the row (e.g., <td class="date-time">)
+                try:
+                    date_text = elem.find_element(By.CSS_SELECTOR, '.date-time').text.strip()
+                except Exception:
+                    date_text = ''
                 try:
                     subject = elem.find_element(By.CSS_SELECTOR, '.subject').text
                 except Exception:
@@ -183,6 +188,7 @@ class MessageScraper:
                     'subject': subject or f'DILER Nachricht von {sender}',
                     'body': message_html,
                     'attachments': attachments,
+                    'date': date_text,
                 })
             except Exception as e:
                 print(f"Error processing message {message_id}: {e}")
