@@ -13,7 +13,8 @@ diler-msg-forwarder
 │   └── attachments         # Directory for storing downloaded attachments (will be created on-demand)
 ├── .env                    # Environment variables for sensitive credentials
 ├── requirements.txt        # Project dependencies
-└── README.md               # Project documentation
+└── README.md               # Project documentation (dublicate)
+README.md               # Project documentation
 ```
 
 ## Setup Instructions
