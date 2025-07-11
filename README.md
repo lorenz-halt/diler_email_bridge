@@ -5,7 +5,7 @@ This project is designed to log into the DILER website, scrape unread messages, 
 ## Project Structure
 
 ```
-diler-msg-forwarder
+diler_msg-forwarder
 ├── src
 │   ├── main.py            # Entry point of the application
 │   ├── email_utils.py     # Utility functions for sending emails
@@ -13,7 +13,7 @@ diler-msg-forwarder
 │   └── attachments         # Directory for storing downloaded attachments (will be created on-demand)
 ├── .env                    # Environment variables for sensitive credentials
 ├── requirements.txt        # Project dependencies
-└── README.md               # Project documentation
+README.md               # Project documentation
 ```
 
 ## Setup Instructions
@@ -54,7 +54,7 @@ diler-msg-forwarder
 
 To run the application, execute the following command:
 ```
-cd diler-msg-forwarder
+cd diler_msg-forwarder
 python src/main.py
 ```
 
@@ -68,10 +68,10 @@ These two example cronjobs execute the script Mondays to Fridays during working 
 ```
 crontab -e
 ```
-Add to the end (replace __<path to your clone>__):
+Add to the end (replace __path to your clone__):
 ```
-*/30 6-18 * * 1-5 /__<path to your clone>__/diler-msg-forwarder/venv/bin/python /__<path to your clone>__/diler-msg-forwarder/src/main.py >> /var/log/diler_msg.log 2>&1
-0 16 * * 0 /__<path to your clone>__/diler-msg-forwarder/venv/bin/python /__<path to your clone>__/diler-msg-forwarder/src/main.py >> /var/log/diler_msg.log 2>&1
+*/30 6-18 * * 1-5 __path to your clone__/diler-msg-forwarder/venv/bin/python __path to your clone__/diler-msg-forwarder/src/main.py >> /var/log/diler_msg.log 2>&1
+0 16 * * 0 __path to your clone__/diler-msg-forwarder/venv/bin/python __path to your clone__/diler-msg-forwarder/src/main.py >> /var/log/diler_msg.log 2>&1
 ```
 
 ## Contributing
