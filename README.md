@@ -10,7 +10,7 @@ diler-msg-forwarder
 │   ├── main.py            # Entry point of the application
 │   ├── email_utils.py     # Utility functions for sending emails
 │   ├── message_scraper.py  # Handles message scraping and processing
-│   └── attachments         # Directory for storing downloaded attachments
+│   └── attachments         # Directory for storing downloaded attachments (will be created on-demand)
 ├── .env                    # Environment variables for sensitive credentials
 ├── requirements.txt        # Project dependencies
 └── README.md               # Project documentation
