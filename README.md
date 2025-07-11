@@ -20,7 +20,7 @@ diler-msg-forwarder
 
 1. **Clone the repository:**
    ```
-   git clone https://github.com/lorenz-halt/diler_email_bridge.git
+   git clone https://github.com/lorenz-halt/diler_message_forwarder.git
    cd diler-msg-forwarder
    ```
 
@@ -54,6 +54,7 @@ diler-msg-forwarder
 
 To run the application, execute the following command:
 ```
+cd diler-msg-forwarder
 python src/main.py
 ```
 
