@@ -5,12 +5,12 @@ This project is designed to log into the DILER website, scrape unread messages, 
 ## Project Structure
 
 ```
-diler-message-forwarder
+diler-msg-forwarder
 ├── src
 │   ├── main.py            # Entry point of the application
 │   ├── email_utils.py     # Utility functions for sending emails
 │   ├── message_scraper.py  # Handles message scraping and processing
-│   └── attachments         # Directory for storing downloaded attachments
+│   └── attachments         # Directory for storing downloaded attachments (will be created on-demand)
 ├── .env                    # Environment variables for sensitive credentials
 ├── requirements.txt        # Project dependencies
 └── README.md               # Project documentation
@@ -20,8 +20,8 @@ diler-message-forwarder
 
 1. **Clone the repository:**
    ```
-   git clone <repository-url>
-   cd diler-message-forwarder
+   git clone https://github.com/lorenz-halt/diler_email_bridge.git
+   cd diler-msg-forwarder
    ```
 
 2. **Create a virtual environment:**
@@ -57,7 +57,21 @@ To run the application, execute the following command:
 python src/main.py
 ```
 
-This will log into the Stuttgart Element-i Schule website, check for unread messages, forward them to the specified email address, and mark them as read.
+This will log into the DILER Schule website, check for unread messages, forward them to the specified email address, and mark them as read.
+
+## Cronjob (Linux)
+
+To run the application periodically on your device consider setting up cronjobs.
+
+These two example cronjobs execute the script Mondays to Fridays during working hours every 30 minutes and Sundays afternoon once (for emergency messages):
+```
+crontab -e
+```
+Add to the end (replace __<path to your clone>__):
+```
+*/30 6-18 * * 1-5 /__<path to your clone>__/diler-msg-forwarder/venv/bin/python /__<path to your clone>__/diler-msg-forwarder/src/main.py >> /var/log/diler_msg.log 2>&1
+0 16 * * 0 /__<path to your clone>__/diler-msg-forwarder/venv/bin/python /__<path to your clone>__/diler-msg-forwarder/src/main.py >> /var/log/diler_msg.log 2>&1
+```
 
 ## Contributing
 
