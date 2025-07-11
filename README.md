@@ -21,7 +21,7 @@ README.md               # Project documentation
 1. **Clone the repository:**
    ```
    git clone https://github.com/lorenz-halt/diler_message_forwarder.git
-   cd diler-msg-forwarder
+   cd diler_msg-forwarder
    ```
 
 2. **Create a virtual environment:**
