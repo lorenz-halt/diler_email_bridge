@@ -16,7 +16,7 @@ WEBSITE_URL = os.getenv('DILER_URL')
 
 
 def main():
-    accounts_path = os.path.join(os.path.dirname(__file__), 'accounts.json')
+    accounts_path = os.path.join(os.path.dirname(__file__), '../accounts.json')
     with open(accounts_path, encoding='utf-8') as f:
         accounts = json.load(f)
 
