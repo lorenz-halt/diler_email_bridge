@@ -12,6 +12,7 @@ diler_msg-forwarder
 │   ├── message_scraper.py  # Handles message scraping and processing
 │   └── attachments         # Directory for storing downloaded attachments (will be created on-demand)
 ├── .env                    # Environment variables for sensitive credentials
+├── accounts.json           # File to manage multiple DILER accounts and receiving email adresses
 ├── requirements.txt        # Project dependencies
 README.md               # Project documentation
 ```
@@ -36,18 +37,29 @@ README.md               # Project documentation
    ```
 
 4. **Configure environment variables:**
-   Create a `.env` file in the root directory and add your credentials:
+   Create a `.env` file in the root directory and add your global credentials (for SMTP and DILER URL):
    ```
    DILER_URL=https://schule.de
-   DILER_USERNAME=user.name
-   DILER_PASSWORD=xxx
-
    EMAIL_ADDRESS=email.sender@host.com
    EMAIL_PASSWORD=yyy
    SMTP_SERVER=mail.host.net
    SMTP_PORT=587
+   ```
 
-   TO_EMAIL_ADDRESS=user.name@host.de
+   Then create a `accounts.json` file to manage multiple DILER accounts and receiving email adresses:
+   ```json
+   [
+     {
+       "DILER_USERNAME": "user1",
+       "DILER_PASSWORD": "pass1",
+       "TO_EMAIL_ADDRESS": ["mail1@example.com", "mail2@example.com"]
+     },
+     {
+       "DILER_USERNAME": "user2",
+       "DILER_PASSWORD": "pass2",
+       "TO_EMAIL_ADDRESS": ["mail3@example.com"]
+     }
+   ]
    ```
 
 ## Usage
@@ -58,7 +70,7 @@ cd diler_msg-forwarder
 python src/main.py
 ```
 
-This will log into the DILER Schule website, check for unread messages, forward them to the specified email address, and mark them as read.
+This will log into the DILER Schule website, check for unread messages, forward them to the specified email address, and mark them as read, with each user respectively.
 
 ## Cronjob (Linux)
 
